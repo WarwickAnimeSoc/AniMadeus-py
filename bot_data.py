@@ -47,4 +47,5 @@ EMOJI_TO_ROLE_MAPPINGS = {
     '🎙️': ROLE_IDS['vc'],
     '🎓': ROLE_IDS['graduate'],
     '🎰': ROLE_IDS['gacha_addict'],
+    '📖': ROLE_IDS['manga'],
 }

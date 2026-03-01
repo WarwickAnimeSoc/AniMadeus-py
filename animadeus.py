@@ -148,6 +148,7 @@ async def on_general_role_assignment_remove(payload):
 
 # Event listener for reaction adds.
 #
+# NOTE: temporary solution, may remove at some point?
 # Used for the role assign system in #role-assign.
 async def on_manga_club_role_add(payload):
     try:
@@ -167,6 +168,7 @@ async def on_manga_club_role_add(payload):
 
 # Event listener for reaction removals.
 #
+# NOTE: temporary solution, may remove at some point?
 # Used for the role assign system in #role-assign.
 async def on_manga_club_role_remove(payload):    
     try:
