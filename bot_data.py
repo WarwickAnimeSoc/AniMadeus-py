@@ -20,7 +20,8 @@ CHANNEL_IDS = {
     'role-assign': 546843849620979723,
     'welcome-and-links': 326044428621840386,
     'off-topic': 391359642539917322,
-    'karaoke-discussion': 413698021084233738
+    'karaoke-discussion': 413698021084233738,
+    'announcements': 281209220232118272,
 }
 
 ROLE_IDS = {

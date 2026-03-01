@@ -174,18 +174,39 @@ async def on_manga_club_role_remove(payload):
     except KeyError:
         return
 
-    role = bot.get_guild(bot_data.GUILD_ID).get_role(role_id)
+    guild = bot.get_guild(bot_data.GUILD_ID)
+
+    role = guild.get_role(role_id)
     if role is None:
         return
 
-    member = bot.get_guild(bot_data.GUILD_ID).get_member(payload.user_id)
+    member = guild.get_member(payload.user_id)
     if member is None:
         return
 
+    channel = guild.get_channel(bot_data.CHANNEL_IDS['announcements'])
+    if channel is None:
+        return
+
     try:
-        await member.remove_roles(role)
+        message = await channel.fetch_message(payload.message_id)
     except discord.HTTPException:
-        pass
+        return
+
+    reacted = False
+    for reaction in message.reactions:
+        async for user in reaction.users():
+            if user.id == member.id:
+                reacted = True
+                break
+        if reacted:
+            break
+
+    if not reacted:
+        try:
+            await member.remove_roles(role)
+        except discord.HTTPException:
+            pass
 
 
 # Member command.
