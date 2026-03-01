@@ -81,9 +81,31 @@ async def on_member_join(member):
 # Used for the role assign system.
 @bot.listen()
 async def on_raw_reaction_add(payload):
-    if payload.message_id != bot_data.MESSAGE_IDS['role_assign_message']:
-        return
+    if payload.message_id == bot_data.MESSAGE_IDS['role_assign_message']:
+        await on_general_role_assignment_add(payload)    
 
+    # if the message moves, this needs to be updated.
+    if payload.message_id == bot_data.MESSAGE_IDS['manga_club_role_assign_message']:
+        await on_manga_club_role_add(payload)
+
+
+# Event listener for reaction adds.
+#
+# Used for the role assign system.
+@bot.listen()
+async def on_raw_reaction_remove(payload):    
+    if payload.message_id == bot_data.MESSAGE_IDS['role_assign_message']:
+        await on_general_role_assignment_remove(payload)
+
+    # if the message moves, this needs to be updated.
+    if payload.message_id == bot_data.MESSAGE_IDS['manga_club_role_assign_message']:
+        await on_manga_club_role_remove(payload)
+
+
+# Event listener for reaction adds.
+#
+# Used for the role assign system in #role-assign.
+async def on_general_role_assignment_add(payload):
     try:
         # If we start using custom emoji this will need editing
         role_id = bot_data.EMOJI_TO_ROLE_MAPPINGS[str(payload.emoji)]
@@ -102,15 +124,53 @@ async def on_raw_reaction_add(payload):
 
 # Event listener for reaction removals.
 #
-# Used for the role assign system.
-@bot.listen()
-async def on_raw_reaction_remove(payload):    
-    if payload.message_id != bot_data.MESSAGE_IDS['role_assign_message']:
-        return
-
+# Used for the role assign system in #role-assign.
+async def on_general_role_assignment_remove(payload):    
     try:
         # If we start using custom emoji this will need editing
         role_id = bot_data.EMOJI_TO_ROLE_MAPPINGS[str(payload.emoji)]
+    except KeyError:
+        return
+
+    role = bot.get_guild(bot_data.GUILD_ID).get_role(role_id)
+    if role is None:
+        return
+
+    member = bot.get_guild(bot_data.GUILD_ID).get_member(payload.user_id)
+    if member is None:
+        return
+
+    try:
+        await member.remove_roles(role)
+    except discord.HTTPException:
+        pass
+
+
+# Event listener for reaction adds.
+#
+# Used for the role assign system in #role-assign.
+async def on_manga_club_role_add(payload):
+    try:
+        role_id = bot_data.ROLE_IDS['manga']
+    except KeyError:
+        return
+
+    role = bot.get_guild(bot_data.GUILD_ID).get_role(role_id)
+    if role is None:
+        return
+
+    try:
+        await payload.member.add_roles(role)
+    except discord.HTTPException:
+        pass
+
+
+# Event listener for reaction removals.
+#
+# Used for the role assign system in #role-assign.
+async def on_manga_club_role_remove(payload):    
+    try:
+        role_id = bot_data.ROLE_IDS['manga']
     except KeyError:
         return
 

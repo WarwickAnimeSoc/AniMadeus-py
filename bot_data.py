@@ -9,6 +9,7 @@ GUILD_ID = 221309541088886784
 
 MESSAGE_IDS = {
     'role_assign_message': 751166772542963824,
+    'manga_club_role_assign_message': 1477628796625489971,
 }
 
 CHANNEL_IDS = {
@@ -34,6 +35,7 @@ ROLE_IDS = {
     'av': 682339378789744647,
     'member': 472915800081170452,
     'exec': 221311015432749056,
+    'manga': 1477484351070404824,
 }
 
 EMOJI_TO_ROLE_MAPPINGS = {
