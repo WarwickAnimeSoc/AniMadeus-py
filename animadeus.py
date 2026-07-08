@@ -1,4 +1,5 @@
 # AniMadeus main file
+import dis
 import subprocess
 import random
 import sqlite3
@@ -71,6 +72,8 @@ def dm_channel_check(ctx):
 @bot.listen()
 async def on_member_join(member):
     guild = bot.get_guild(bot_data.GUILD_ID)
+    assert guild is not None, "server must exist"
+
     newcomers_channel = guild.get_channel(bot_data.CHANNEL_IDS['newcomers'])
     welcome_channel = guild.get_channel(bot_data.CHANNEL_IDS['welcome-and-links'])
     rules_channel = guild.get_channel(bot_data.CHANNEL_IDS['rules'])
@@ -78,6 +81,12 @@ async def on_member_join(member):
     welcome_string = ('Welcome to the Warwick Anime and Manga Society Discord server, {0}!'
                       ' Please see {1} and {2} for information about the society and this server.'
                       ' To gain access to the rest of the server please react to the message in {3}!')
+
+    assert isinstance(newcomers_channel, discord.TextChannel)
+    assert isinstance(welcome_channel, discord.TextChannel)
+    assert isinstance(rules_channel, discord.TextChannel)
+    assert isinstance(role_channel, discord.TextChannel)
+    
     await newcomers_channel.send(
         welcome_string.format(member.mention, welcome_channel.mention, rules_channel.mention, role_channel.mention))
 
@@ -118,7 +127,10 @@ async def on_general_role_assignment_add(payload):
     except KeyError:
         return
 
-    role = bot.get_guild(bot_data.GUILD_ID).get_role(role_id)
+    guild = bot.get_guild(bot_data.GUILD_ID)
+    assert guild is not None
+
+    role = guild.get_role(role_id)
     if role is None:
         return
 
@@ -138,11 +150,14 @@ async def on_general_role_assignment_remove(payload):
     except KeyError:
         return
 
-    role = bot.get_guild(bot_data.GUILD_ID).get_role(role_id)
+    guild = bot.get_guild(bot_data.GUILD_ID)
+    assert guild is not None
+
+    role = guild.get_role(role_id)
     if role is None:
         return
 
-    member = bot.get_guild(bot_data.GUILD_ID).get_member(payload.user_id)
+    member = guild.get_member(payload.user_id)
     if member is None:
         return
 
@@ -162,7 +177,10 @@ async def on_manga_club_role_add(payload):
     except KeyError:
         return
 
-    role = bot.get_guild(bot_data.GUILD_ID).get_role(role_id)
+    guild = bot.get_guild(bot_data.GUILD_ID)
+    assert guild is not None
+
+    role = guild.get_role(role_id)
     if role is None:
         return
 
@@ -183,6 +201,7 @@ async def on_manga_club_role_remove(payload):
         return
 
     guild = bot.get_guild(bot_data.GUILD_ID)
+    assert guild is not None
 
     role = guild.get_role(role_id)
     if role is None:
@@ -193,8 +212,7 @@ async def on_manga_club_role_remove(payload):
         return
 
     channel = guild.get_channel(bot_data.CHANNEL_IDS['announcements'])
-    if channel is None:
-        return
+    assert isinstance(channel, discord.TextChannel)
 
     try:
         message = await channel.fetch_message(payload.message_id)
@@ -245,8 +263,14 @@ async def member(ctx, member_id: int):
         await ctx.message.channel.send(
             '{0} - An error occurred when running this command, please wait for the webmaster to fix it.'.format(
                 ctx.message.author.mention))
+
+        guild = bot.get_guild(bot_data.GUILD_ID)
+        assert guild is not None
+
         webmaster = ctx.message.guild.get_role(bot_data.ROLE_IDS['webmaster'])
-        web_development_channel = bot.get_guild(bot_data.GUILD_ID).get_channel(bot_data.CHANNEL_IDS['web-development'])
+        web_development_channel = guild.get_channel(bot_data.CHANNEL_IDS['web-development'])
+        assert isinstance(web_development_channel, discord.TextChannel)
+
         return await web_development_channel.send(
             '{0} - There was an SQL connection error when executing the member command.'.format(webmaster.mention))
 
@@ -267,8 +291,16 @@ async def member(ctx, member_id: int):
     conn.close()
 
     if tag_matched:
-        member_role = bot.get_guild(bot_data.GUILD_ID).get_role(bot_data.ROLE_IDS['member'])
-        member_server = bot.get_guild(bot_data.GUILD_ID).get_member(ctx.message.author.id)
+
+        guild = bot.get_guild(bot_data.GUILD_ID)
+        assert guild is not None
+
+        member_role = guild.get_role(bot_data.ROLE_IDS['member'])
+        member_server = guild.get_member(ctx.message.author.id)
+
+        assert member_role is not None
+        assert member_server is not None
+
         await member_server.add_roles(member_role)
         return await ctx.message.channel.send('{0} - Member role added.'.format(ctx.message.author.mention))
     elif result_found:
@@ -420,8 +452,14 @@ async def on_submit_karaoke_history_error(ctx, error):
     else:
         await ctx.message.channel.send(
             '{0} - There was an error processing this command.'.format(ctx.message.author.mention))
+
+        guild = bot.get_guild(bot_data.GUILD_ID)
+        assert guild is not None
+
         webmaster = ctx.message.guild.get_role(bot_data.ROLE_IDS['webmaster'])
-        web_development_channel = bot.get_guild(bot_data.GUILD_ID).get_channel(bot_data.CHANNEL_IDS['web-development'])
+        web_development_channel = guild.get_channel(bot_data.CHANNEL_IDS['web-development'])
+        assert isinstance(web_development_channel, discord.TextChannel)
+
         return await web_development_channel.send(
             ('{0} - There was an error with the karaoke history command.\n'
              '```{1}```').format(webmaster.mention, error))
@@ -468,8 +506,14 @@ async def on_lastsang_error(ctx, error):
     else:
         await ctx.message.channel.send(
             '{0} - There was an error processing this command.'.format(ctx.message.author.mention))
+
+        guild = bot.get_guild(bot_data.GUILD_ID)
+        assert guild is not None
+
         webmaster = ctx.message.guild.get_role(bot_data.ROLE_IDS['webmaster'])
-        web_development_channel = bot.get_guild(bot_data.GUILD_ID).get_channel(bot_data.CHANNEL_IDS['web-development'])
+        web_development_channel = guild.get_channel(bot_data.CHANNEL_IDS['web-development'])
+        assert isinstance(web_development_channel, discord.TextChannel)
+
         return await web_development_channel.send(
             ('{0} - There was an error with the lastsang command.\n'
              '```{1}```').format(webmaster.mention, error))
@@ -514,8 +558,15 @@ async def on_sang_error(ctx, error):
     else:
         await ctx.message.channel.send(
             '{0} - There was an error processing this command.'.format(ctx.message.author.mention))
+
+        guild = bot.get_guild(bot_data.GUILD_ID)
+        assert guild is not None
+
         webmaster = ctx.message.guild.get_role(bot_data.ROLE_IDS['webmaster'])
-        web_development_channel = bot.get_guild(bot_data.GUILD_ID).get_channel(bot_data.CHANNEL_IDS['web-development'])
+        web_development_channel = guild.get_channel(bot_data.CHANNEL_IDS['web-development'])
+
+        assert isinstance(web_development_channel, discord.TextChannel)
+
         return await web_development_channel.send(
             ('{0} - There was an error with the sang command.\n'
              '```{1}```').format(webmaster.mention, error))
@@ -600,8 +651,14 @@ async def on_topby_error(ctx, error):
     else:
         await ctx.message.channel.send(
             '{0} - There was an error processing this command.'.format(ctx.message.author.mention))
+
+        guild = bot.get_guild(bot_data.GUILD_ID)
+        assert guild is not None
+
         webmaster = ctx.message.guild.get_role(bot_data.ROLE_IDS['webmaster'])
-        web_development_channel = bot.get_guild(bot_data.GUILD_ID).get_channel(bot_data.CHANNEL_IDS['web-development'])
+        web_development_channel = guild.get_channel(bot_data.CHANNEL_IDS['web-development'])
+        assert isinstance(web_development_channel, discord.TextChannel)
+
         return await web_development_channel.send(
             ('{0} - There was an error with the topby command.\n'
              '```{1}```').format(webmaster.mention, error))
