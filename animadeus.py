@@ -20,8 +20,13 @@ intents.members = True
 intents.messages = True
 intents.message_content = True
 
+class AniBot(commands.Bot):
+    async def setup_hook(self):
+        await self.add_cog(OffTopicCog(self))
+
+
 # Bot instance
-bot = commands.Bot(command_prefix='!', description='The Warwick Anime & Manga Society Discord Bot.', intents=intents)
+bot = AniBot(command_prefix='!', description='The Warwick Anime & Manga Society Discord Bot.', intents=intents)
 
 
 # Startup event.
@@ -642,7 +647,6 @@ async def coinflip(ctx):
 
 
 def main():
-    bot.add_cog(OffTopicCog(bot))
     bot.run(config.bot_token)
 
 if __name__ == '__main__':
