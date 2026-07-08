@@ -90,3 +90,8 @@ class OffTopicCog(commands.Cog):
         while quote == '':
             quote = random.choice((open("./data/bravonolan.txt").readlines()))
         await ctx.reply(quote)
+
+
+async def setup(bot: commands.Bot):
+    bot.add_cog(OffTopicCog(bot))
+

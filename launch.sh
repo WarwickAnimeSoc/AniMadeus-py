@@ -6,6 +6,6 @@ kill -9 `cat pid.txt`
 rm pid.txt
 
 # Run bot and store pid
-nohup .venv/bin/python ./animadeus.py &
+nohup ./.venv/bin/animadeus &
 echo $! > pid.txt
 echo "Launched new instance."

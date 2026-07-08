@@ -1,0 +1,21 @@
+[project]
+name = "animadeus"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "discord-py==2.7.1",
+    "legacy-cgi==2.6.4",
+    "mysql-connector-python==9.7.0",
+    "requests==2.34.2",
+]
+
+[project.scripts]
+animadeus = "animadeus:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["animadeus", "bot_data", "off_topic", "config"]
+

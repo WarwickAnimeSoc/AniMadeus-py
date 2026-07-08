@@ -18,6 +18,7 @@ from off_topic import OffTopicCog
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
+intents.message_content = True
 
 # Bot instance
 bot = commands.Bot(command_prefix='!', description='The Warwick Anime & Manga Society Discord Bot.', intents=intents)
@@ -640,6 +641,9 @@ async def coinflip(ctx):
         ctx.message.author.mention, outcome))
 
 
-if __name__ == '__main__':
+def main():
     bot.add_cog(OffTopicCog(bot))
     bot.run(config.bot_token)
+
+if __name__ == '__main__':
+    main()

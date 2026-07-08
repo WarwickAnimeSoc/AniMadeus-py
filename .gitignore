@@ -6,6 +6,8 @@ config.py
 
 # Python cache files
 __pycache__/
+*.egg-info
+uv.lock
 
 # Nohup file
 nohup.out
