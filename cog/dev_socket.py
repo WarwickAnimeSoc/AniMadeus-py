@@ -59,9 +59,11 @@ class DevSocketCog(commands.Cog):
         channel = guild.get_channel(bot_data.CHANNEL_IDS['web-development'])
         assert isinstance(channel, discord.TextChannel)
 
+        message = f"```\n{data.replace("`", "\u200b`")}```"
+
         # choose corresponding message type based on message size
-        if len(data) <= MAX_MESSAGE_SIZE:
-            await channel.send(content=data)
+        if len(message) <= MAX_MESSAGE_SIZE:
+            await channel.send(content=message)
         elif len(data) <= MAX_ATTACHMENT_SIZE:
             await channel.send(
                 file=discord.File(BytesIO(raw_bytes), filename="output.txt")
