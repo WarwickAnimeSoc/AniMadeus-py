@@ -13,6 +13,7 @@ import requests
 import bot_data
 import config
 from off_topic import OffTopicCog
+from cog.dev_socket import DevSocketCog
 
 
 # Intents
@@ -24,6 +25,7 @@ intents.message_content = True
 class AniBot(commands.Bot):
     async def setup_hook(self):
         await self.add_cog(OffTopicCog(self))
+        await self.add_cog(DevSocketCog(self))
 
 
 # Bot instance
