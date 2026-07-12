@@ -278,21 +278,21 @@ async def member(ctx, member_id: int):
 
     cursor = conn.cursor()
 
-    query = ('SELECT discord_tag FROM members_member'
+    query = ('SELECT discord_username FROM members_member'
              ' INNER JOIN auth_user ON auth_user.id = members_member.user_id'
              ' WHERE auth_user.username = %s;')
 
     cursor.execute(query, (member_id,))
 
-    tag_matched = False
+    username_matched = False
     result_found = False
-    for (discord_tag,) in cursor:
+    for (discord_username,) in cursor:
         result_found = True
-        tag_matched = discord_tag == '{0}'.format(ctx.message.author.name)
+        username_matched = discord_username == '{0}'.format(ctx.message.author.name)
 
     conn.close()
 
-    if tag_matched:
+    if username_matched:
 
         guild = bot.get_guild(bot_data.GUILD_ID)
         assert guild is not None
