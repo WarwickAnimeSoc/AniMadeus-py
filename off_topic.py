@@ -92,6 +92,3 @@ class OffTopicCog(commands.Cog):
         await ctx.reply(quote)
 
 
-async def setup(bot: commands.Bot):
-    bot.add_cog(OffTopicCog(bot))
-

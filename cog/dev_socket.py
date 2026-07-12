@@ -29,6 +29,8 @@ class DevSocketCog(commands.Cog):
         if os.path.exists(config.dev_socket):
             os.unlink(config.dev_socket)
 
+    @commands.Cog.listener()
+    async def on_ready(self) -> None:
         self.server = await asyncio.start_unix_server(
             self.handle_input,
             path=config.dev_socket

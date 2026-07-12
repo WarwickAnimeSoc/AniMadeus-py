@@ -17,5 +17,6 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-py-modules = ["animadeus", "bot_data", "off_topic", "config", "cog"]
+packages = ["cog", "actions"]
+py-modules = ["animadeus", "bot_data", "off_topic", "config"]
 

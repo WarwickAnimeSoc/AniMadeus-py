@@ -1,5 +1,4 @@
 # AniMadeus main file
-import dis
 import subprocess
 import random
 import sqlite3
@@ -14,6 +13,8 @@ import bot_data
 import config
 from off_topic import OffTopicCog
 from cog.dev_socket import DevSocketCog
+from cog.command_socket import CommandSocketCog
+from actions.link_if_member import link_if_member
 
 
 # Intents
@@ -26,6 +27,7 @@ class AniBot(commands.Bot):
     async def setup_hook(self):
         await self.add_cog(OffTopicCog(self))
         await self.add_cog(DevSocketCog(self))
+        await self.add_cog(CommandSocketCog(self))
 
 
 # Bot instance
@@ -91,6 +93,12 @@ async def on_member_join(member):
     
     await newcomers_channel.send(
         welcome_string.format(member.mention, welcome_channel.mention, rules_channel.mention, role_channel.mention))
+
+    web_dev = guild.get_channel(bot_data.CHANNEL_IDS['web-development'])
+    assert isinstance(web_dev, discord.TextChannel)
+
+    # check if account is already known member
+    await link_if_member(guild, web_dev, member.id)
 
 
 # Event listener for reaction adds.
