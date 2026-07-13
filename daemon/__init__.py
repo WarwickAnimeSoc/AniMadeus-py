@@ -91,10 +91,6 @@ async def setup_daemon(bot: commands.Bot):
         if payload.message_id == bot_data.MESSAGE_IDS['role_assign_message']:
             await on_general_role_assignment_add(payload)    
 
-        # if the message moves, this needs to be updated.
-        if payload.message_id == bot_data.MESSAGE_IDS['manga_club_role_assign_message']:
-            await on_manga_club_role_add(payload)
-
 
     # Event listener for reaction adds.
     #
@@ -103,10 +99,6 @@ async def setup_daemon(bot: commands.Bot):
     async def on_raw_reaction_remove(payload):    
         if payload.message_id == bot_data.MESSAGE_IDS['role_assign_message']:
             await on_general_role_assignment_remove(payload)
-
-        # if the message moves, this needs to be updated.
-        if payload.message_id == bot_data.MESSAGE_IDS['manga_club_role_assign_message']:
-            await on_manga_club_role_remove(payload)
 
 
     # Event listener for reaction adds.
@@ -157,74 +149,6 @@ async def setup_daemon(bot: commands.Bot):
             await member.remove_roles(role)
         except discord.HTTPException:
             pass
-
-
-    # Event listener for reaction adds.
-    #
-    # NOTE: temporary solution, may remove at some point?
-    # Used for the role assign system in #role-assign.
-    async def on_manga_club_role_add(payload):
-        try:
-            role_id = bot_data.ROLE_IDS['manga']
-        except KeyError:
-            return
-
-        guild = bot.get_guild(bot_data.GUILD_ID)
-        assert guild is not None
-
-        role = guild.get_role(role_id)
-        if role is None:
-            return
-
-        try:
-            await payload.member.add_roles(role)
-        except discord.HTTPException:
-            pass
-
-
-    # Event listener for reaction removals.
-    #
-    # NOTE: temporary solution, may remove at some point?
-    # Used for the role assign system in #role-assign.
-    async def on_manga_club_role_remove(payload):    
-        try:
-            role_id = bot_data.ROLE_IDS['manga']
-        except KeyError:
-            return
-
-        guild = bot.get_guild(bot_data.GUILD_ID)
-        assert guild is not None
-
-        role = guild.get_role(role_id)
-        if role is None:
-            return
-
-        member = guild.get_member(payload.user_id)
-        if member is None:
-            return
-
-        channel = guild.get_channel(bot_data.CHANNEL_IDS['announcements'])
-        assert isinstance(channel, discord.TextChannel)
-
-        try:
-            message = await channel.fetch_message(payload.message_id)
-        except discord.HTTPException:
-            return
-
-        reacted = False
-        for reaction in message.reactions:
-            async for user in reaction.users():
-                if user.id == member.id:
-                    reacted = True
-                    break
-            if reacted:
-                break
-
-        if not reacted:
-            try:
-                await member.remove_roles(role)
-            except discord.HTTPException:
-                pass
 
 
     # Create_website_user command.

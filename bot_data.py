@@ -9,7 +9,6 @@ GUILD_ID = 221309541088886784
 
 MESSAGE_IDS = {
     'role_assign_message': 751166772542963824,
-    'manga_club_role_assign_message': 1477628796625489971,
 }
 
 CHANNEL_IDS = {
