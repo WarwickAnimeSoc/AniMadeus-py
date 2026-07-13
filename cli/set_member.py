@@ -8,6 +8,14 @@ import mysql.connector
 import argparse
 
 
+# Used to assign users the Member role.
+#
+# The member role is assigned to users that have linked their website (animesoc.co.uk) account with their discord.
+# The current website API is barebones and lacks any form of authentication. Discord tag to member's website accounts
+# could be considered sensitive by some. So to avoid needing to implement authentication on the API the bot connects
+# to the MYSQL server that contains the site's database to find the discord tag.
+#
+# For this command to work the bot must be running on the same machine as the website's database.
 async def set_member(guild: discord.Guild, user_id: int) -> None:
     """
     give the provided discord user the member role,
