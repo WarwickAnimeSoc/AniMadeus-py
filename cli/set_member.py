@@ -1,21 +1,27 @@
+from discord.utils import escape_mentions
+
 import config
 import discord
 import bot_data
 import logging
 import mysql.connector
+import argparse
 
-# TODO: not production ready
-async def link_if_member(guild: discord.Guild, web_dev: discord.TextChannel, user_id: int) -> None:
+
+async def set_member(guild: discord.Guild, user_id: int) -> None:
     """
     give the provided discord user the member role,
     if corresponding discord id is in server database.
     """
 
-    member_role = guild.get_role(bot_data.ROLE_IDS['member'])
-    assert member_role is not None
+    log_channel = await guild.fetch_channel(bot_data.CHANNEL_IDS['web-development'])
+    assert isinstance(log_channel, discord.TextChannel)
 
-    target_member = guild.get_member(user_id)
-    if target_member is None:
+    member_role = await guild.fetch_role(bot_data.ROLE_IDS['member'])
+
+    try:
+        target_member = await guild.fetch_member(user_id)
+    except discord.NotFound:
         logging.warning(f"tried to set member role to unknown user id: {user_id}, expected if added on website before joining discord server.")
         return
 
@@ -27,7 +33,7 @@ async def link_if_member(guild: discord.Guild, web_dev: discord.TextChannel, use
             user=config.db_user,
             password=config.db_password)
     except mysql.connector.Error:
-        await web_dev.send("animadeus failed to connect to database")
+        await log_channel.send("animadeus failed to connect to database")
 
     cursor = conn.cursor()
 
@@ -39,9 +45,11 @@ async def link_if_member(guild: discord.Guild, web_dev: discord.TextChannel, use
     # the existence of the user id in the database is proof that the account is a member account.
     is_member = cursor.fetchone() is not None
 
-    # TODO: need escaping
     if is_member:
         await target_member.add_roles(member_role)
-        await web_dev.send(f"added member role to {target_member.name}")
+        await log_channel.send(
+            f"added member role to {target_member.mention}",
+            allowed_mentions=discord.AllowedMentions.none()
+        )
 
 
