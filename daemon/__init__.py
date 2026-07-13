@@ -38,20 +38,6 @@ async def setup_daemon(bot: commands.Bot):
         return ctx.message.channel.id == bot_data.CHANNEL_IDS['web-development']
 
 
-    # Karaoke-discussion check.
-    #
-    # Checks if a command was run in the karaoke-discussion channel.
-    def karaoke_discussion_channel_check(ctx):
-        return ctx.message.channel.id == bot_data.CHANNEL_IDS['karaoke-discussion']
-
-
-    # DM check.
-    #
-    # Checks if a command was run in DMs with the bot.
-    def dm_channel_check(ctx):
-        return isinstance(ctx.message.channel, discord.DMChannel)
-
-
     # Event listener for member joins.
     #
     # Used to welcome new users.
