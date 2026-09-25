@@ -3,8 +3,6 @@
 # Mainly contains ids from the discord server. Leaving this out of the config file so it can be edited
 # by non-webmasters.
 
-DATABASE_PATH = 'data/db.sqlite3'
-
 GUILD_ID = 221309541088886784
 
 MESSAGE_IDS = {
